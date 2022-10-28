@@ -13,6 +13,18 @@ function saveCurrentImg() {
 	download(img)
 }
 
+function setKeyboardEvents() {
+	document.addEventListener('keydown', function(event) {
+		// If the key pressed is '1' '2' or '3'
+		if (event.key == '1' || event.key == '2' || event.key == '3') {
+			setTimeout(reloadButtons, 500)
+		}
+		else if (event.key == '4') {
+			saveCurrentImg()
+		}
+	});
+}
+
 function reloadButtons() {
 	console.log("Reloading buttons")
 	// Add downloader to Love button
@@ -31,9 +43,15 @@ function reloadButtons() {
 function download(url) {
     // Encode the url using base 64
     url = "http://127.0.0.1:5001/" + btoa(url);
-    window.open(url);
+    wnd = window.open(url);
+	
+	// Close the window after 0.5 seconds
+	setTimeout(function() {
+		wnd.close();
+	}, 200);
 
-	setTimeout(reloadButtons, 500)
+	setTimeout(reloadButtons, 200)
 }
 
 setTimeout(reloadButtons, 500)
+setTimeout(setKeyboardEvents, 500)

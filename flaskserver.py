@@ -3,6 +3,7 @@ import requests
 import random
 import base64
 import os
+import threading
 
 app = Flask(__name__)
 
@@ -16,9 +17,9 @@ if not os.path.exists("images"):
 if not os.path.exists("jobIds"):
     os.makedirs("jobIds")
 
-#Define a route to downloader function
-@app.route('/<url>')
-def download(url):
+def downloader(url):
+    if url == "favicon.ico":
+        return None
     # Decode string using base64
     url = base64.b64decode(url)
     print(url)
@@ -28,8 +29,15 @@ def download(url):
     open("images/" + file_name, 'wb').write(file.content)
     open("jobIds/" + file_name + ".txt", 'w').write(file_name + "\n" + str(url))
 
-    # Return 200 OK
-    return "200 OK"
+
+#Define a route to downloader function
+@app.route('/<url>')
+def download(url):
+    # Create a new thread
+    thread = threading.Thread(target=downloader, args=(url,))
+    # Start the thread
+    thread.start()
+    return "Download started"
 
 #Start flask server
 if __name__ == '__main__':
